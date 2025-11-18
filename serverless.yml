@@ -1,0 +1,19 @@
+
+component: http
+name: http-nuxtjs
+app: my-nuxtjs-app-77e77190
+
+inputs:
+  src:
+    dist: ./
+    hook: npm run build
+    exclude:
+      - .env
+  faas:
+    runtime: Nodejs12.16
+    framework: nuxtjs
+    name: ${name}
+  apigw:
+    protocols:
+      - http
+      - https
