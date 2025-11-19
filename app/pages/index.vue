@@ -252,7 +252,7 @@ onMounted(() => {
             color="info"
             variant="soft"
           >
-            步长: 1分钟
+            步长: 5分钟
           </UBadge>
         </div>
       </template>
@@ -288,52 +288,6 @@ onMounted(() => {
           </div>
         </div>
       </template>
-    </UCard>
-
-    <UCard class="mt-6">
-      <template #header>
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-          API 接口说明
-        </h3>
-      </template>
-
-      <div class="space-y-3 text-sm">
-        <p class="text-gray-700 dark:text-gray-300">
-          当前使用的预测API: <code class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded">{{ apiUrl }}/api/v1/predict</code>
-        </p>
-
-        <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-          <p class="font-medium text-gray-900 dark:text-white mb-2">
-            接口格式：
-          </p>
-          <pre class="text-xs overflow-x-auto"><code>POST {{ apiUrl }}/api/v1/predict
-
-Request Body:
-{
-  "history_data": [number, ...],  // 历史时序数据
-  "steps": 15 | 120 | 720 | 1440  // 预测步长(分钟)
-}
-
-Response:
-{
-  "status": "success",
-  "message": "预测成功",
-  "forecast_data": [number, ...],     // 预测结果数据
-  "forecast_dates": ["ISO8601", ...], // 预测结果对应日期
-  "model_version": "string"           // 模型版本
-}</code></pre>
-        </div>
-
-        <div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
-          <p class="text-sm text-blue-900 dark:text-blue-200">
-            <strong>预测步长选项：</strong><br>
-            • 15 - 短期预测(15分钟)<br>
-            • 120 - 中期预测(2小时)<br>
-            • 720 - 长期预测(12小时)<br>
-            • 1440 - 超长期预测(1天)
-          </p>
-        </div>
-      </div>
     </UCard>
   </div>
 </template>
