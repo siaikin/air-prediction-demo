@@ -6,13 +6,13 @@ const apiUrl = ref('http://192.168.224.100:8000')
 
 // 预测步长选项（根据API文档）
 const predictionDurations = [
-  { label: '15分钟', value: 15 },
-  { label: '2小时', value: 120 },
-  { label: '12小时', value: 720 },
-  { label: '1天', value: 1440 }
+  { label: '15分钟', value: 3 },
+  { label: '2小时', value: 24 },
+  { label: '12小时', value: 144 },
+  { label: '1天', value: 288 }
 ]
 
-const selectedDuration = ref(15)
+const selectedDuration = ref(3)
 const loading = ref(false)
 
 // 图表配置
@@ -89,45 +89,24 @@ const chartOption = ref<EChartsOption>({
   ]
 })
 
-// 生成时间标签
-const generateTimeLabels = (startTime: Date, minutes: number, step = 1) => {
-  const labels = []
-  for (let i = 0; i <= minutes; i += step) {
-    const time = new Date(startTime.getTime() + i * 60000)
-    labels.push(
-      `${time.getHours().toString().padStart(2, '0')}:${time.getMinutes().toString().padStart(2, '0')}`
-    )
-  }
-  return labels
-}
-
-// 生成模拟历史数据
-const generateHistoricalData = (count: number) => {
-  return Array.from({ length: count }, (_, i) => {
-    return Number((50 + Math.random() * 30 + Math.sin(i / 10) * 10).toFixed(2))
-  })
-}
-
 // 获取数据的函数
 const fetchData = async () => {
   loading.value = true
 
   try {
-    // 生成历史数据（这里使用模拟数据，您可以替换为实际的历史数据源）
-    const historicalMinutes = 60
-    const historicalData = generateHistoricalData(historicalMinutes)
-
     // 调用预测API（通过本地API转发）
     const response = await $fetch<{
       status: string
       message: string
       forecast_data: number[]
       forecast_dates: string[]
+      history_data: number[]
+      history_dates: string[]
       model_version: string
     }>(`${apiUrl.value}/api/v1/predict`, {
       method: 'POST',
       body: {
-        history_data: historicalData,
+        history_data: [1, 2, 3, 4, 5],
         steps: selectedDuration.value
       }
     })
@@ -135,20 +114,14 @@ const fetchData = async () => {
     // 处理响应数据
     const predictionData = response.forecast_data
     const predictionDates = response.forecast_dates
-
-    // 生成时间标签
-    const now = new Date()
-    const historicalTimeLabels = generateTimeLabels(
-      new Date(now.getTime() - historicalMinutes * 60000),
-      historicalMinutes,
-      1
-    )
+    const historicalData = response.history_data
+    const historicalDates = response.history_dates
 
     // 使用API返回的日期作为预测时间标签
-    const allTimeLabels = [...historicalTimeLabels, ...predictionDates.map((date) => {
+    const allTimeLabels = [...historicalDates, ...predictionDates].map((date) => {
       const d = new Date(date)
       return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`
-    })]
+    })
 
     chartOption.value = {
       ...chartOption.value,
